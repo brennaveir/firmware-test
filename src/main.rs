@@ -1,14 +1,20 @@
 use axum::{
     body::StreamBody,
+    extract::{DefaultBodyLimit, Multipart},
     http::header,
+    Json,
     response::{Html, IntoResponse},
     routing::get,
     Router, extract::Query,
 };
 use http::Method;
-use tower_http::cors::{Any, CorsLayer};
-use tower_http::trace::TraceLayer;
+use tower_http::{
+    cors::{Any, CorsLayer},
+    limit::RequestBodyLimitLayer,
+    trace::TraceLayer,
+};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+use tokio::time::{sleep, Duration};
 use tokio_util::io::ReaderStream;
 
 #[derive(serde::Deserialize)]
@@ -31,10 +37,15 @@ async fn main() {
         // allow requests from any origin
         .allow_origin(Any);
     let app = Router::new()
-        .route("/index", get(firmware_page))
+        .route("/", get(firmware_page).post(upload_firmware))
+        .route("/update", get(update_camera))
         .route("/scripts/main.js", get(get_main_js))
         .route("/styles/main.css", get(get_main_css))
         .route("/cgi-bin/param.cgi", get(get_cgi_param))
+        .layer(DefaultBodyLimit::disable())
+        .layer(RequestBodyLimitLayer::new(
+            250 * 1024 * 1024, /* 250mb */
+        ))
         .layer(cors.clone())
         .layer(TraceLayer::new_for_http());
     tracing::info!("Starting server...");
@@ -44,6 +55,45 @@ async fn main() {
         .unwrap();
 }
 
+pub async fn firmware_page() -> Html<&'static str> {
+    let dashboard = include_str!("../public/index.html");
+    Html(dashboard)
+}
+
+pub async fn upload_firmware(mut multipart: Multipart) -> Json<String> {
+    while let Some(field) = multipart.next_field().await.unwrap() {
+        let name = field.name().unwrap().to_string();
+        let file_name = field.file_name().unwrap().to_string();
+        let content_type = field.content_type().unwrap().to_string();
+        let data = field.bytes().await.unwrap();
+
+        tracing::info!(
+            "Length of `{}` (`{}`: `{}`) is {} bytes",
+            name,
+            file_name,
+            content_type,
+            data.len()
+        );
+    }
+    sleep(Duration::from_secs(10)).await;
+    Json("File successfully uploaded".to_string())
+}
+
+pub async fn update_camera() -> Json<String> {
+    sleep(Duration::from_secs(30)).await;
+    Json("Camera successfully updated".to_string())
+}
+
+pub async fn get_cgi_param(
+    param: Query<Params>
+) -> String {
+    if param.f == "get_device_conf".to_string() {
+        let device_conf = include_str!("../get_device_conf.txt");
+        device_conf.to_string()
+    } else {
+        "Not found".to_string()
+    }
+}
 
 pub async fn get_main_js() -> impl IntoResponse {
     let main_js = include_str!("../public/scripts/main.js");
@@ -74,20 +124,4 @@ pub async fn get_main_css() -> impl IntoResponse {
         ),
     ];
     (headers, body)
-}
-
-pub async fn firmware_page() -> Html<&'static str> {
-    let dashboard = include_str!("../public/index.html");
-    Html(dashboard)
-}
-
-pub async fn get_cgi_param(
-    param: Query<Params>
-) -> String {
-    if param.f == "get_device_conf".to_string() {
-        let device_conf = include_str!("../get_device_conf.txt");
-        device_conf.to_string()
-    } else {
-        "Not found".to_string()
-    }
 }
