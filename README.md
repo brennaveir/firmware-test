@@ -103,10 +103,11 @@ at the root of the project. The webserver will be hosted at:
 
     http://localhost:3000/
 
-Index.html is available at the project root. The following routes are available
-GET /
-POST /
-GET /update
-GET /scripts/main.js
-GET /styles/main.css
-GET /cgi-bin/param.cgi?f=get_device_conf
+Index.html is available at the project root. The following routes are available:
+
+- GET /
+- POST /
+- GET /update
+- GET /scripts/main.js
+- GET /styles/main.css
+- GET /cgi-bin/param.cgi?f=get_device_conf
