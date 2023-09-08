@@ -1,25 +1,25 @@
 use axum::{
     body::StreamBody,
+    extract::Query,
     extract::{DefaultBodyLimit, Multipart},
     http::header,
-    Json,
     response::{Html, IntoResponse},
     routing::get,
-    Router, extract::Query,
+    Json, Router,
 };
 use http::Method;
+use tokio::time::{sleep, Duration};
+use tokio_util::io::ReaderStream;
 use tower_http::{
     cors::{Any, CorsLayer},
     limit::RequestBodyLimitLayer,
     trace::TraceLayer,
 };
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-use tokio::time::{sleep, Duration};
-use tokio_util::io::ReaderStream;
 
 #[derive(serde::Deserialize)]
 pub struct Params {
-    f: String
+    f: String,
 }
 
 #[tokio::main]
@@ -31,11 +31,11 @@ async fn main() {
         )
         .with(tracing_subscriber::fmt::layer())
         .init();
+
     let cors = CorsLayer::new()
-        // allow `GET` and `POST` when accessing the resource
         .allow_methods([Method::GET])
-        // allow requests from any origin
         .allow_origin(Any);
+
     let app = Router::new()
         .route("/", get(firmware_page).post(upload_firmware))
         .route("/update", get(update_camera))
@@ -48,7 +48,9 @@ async fn main() {
         ))
         .layer(cors.clone())
         .layer(TraceLayer::new_for_http());
+
     tracing::info!("Starting server...");
+
     axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
         .serve(app.into_make_service())
         .await
@@ -84,11 +86,9 @@ pub async fn update_camera() -> Json<String> {
     Json("Camera successfully updated".to_string())
 }
 
-pub async fn get_cgi_param(
-    param: Query<Params>
-) -> String {
-    if param.f == "get_device_conf".to_string() {
-        let device_conf = include_str!("../get_device_conf.txt");
+pub async fn get_cgi_param(param: Query<Params>) -> String {
+    if param.f == "get_device_conf" {
+        let device_conf = include_str!("../assets/get_device_conf.txt");
         device_conf.to_string()
     } else {
         "Not found".to_string()
