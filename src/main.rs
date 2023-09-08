@@ -1,7 +1,6 @@
 use axum::{
     body::StreamBody,
-    extract::Query,
-    extract::{DefaultBodyLimit, Multipart},
+    extract::{DefaultBodyLimit, Multipart, Query},
     http::header,
     response::{Html, IntoResponse},
     routing::get,
@@ -33,7 +32,7 @@ async fn main() {
         .init();
 
     let cors = CorsLayer::new()
-        .allow_methods([Method::GET])
+        .allow_methods([Method::GET, Method::POST])
         .allow_origin(Any);
 
     let app = Router::new()
