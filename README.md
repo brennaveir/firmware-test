@@ -63,23 +63,23 @@ We need to upgrade this device.
 
 ## Upgrade Device
 
-The firmware file is located in the hardware model identifier (device_model) folder. The soc_version is the filename:
+The firmware file is located in the hardware model identifier (device_model) folder. The img_name is the filename:
 
     https://firmware.ptzoptics.com/F53.HI/VX630A_F53.HI_V2.0.39_24M_20230817.img 
 
 The changelog is located in the hardware model identifier (device_model) folder. The log_name is the filename:
 
-    https://firmware.ptzoptics.com/F53.HI/upgrade.loghttps://firmware.ptzoptics.com/F53.HI/upgrade.log   
+    https://firmware.ptzoptics.com/F53.HI/upgrade.log
 
 ## The Test
 
 For your skill assessment, you will emulate the firmware update function of a camera on a local web server. The steps are as follows:
 
 1. Create a web page which will allow a user to query the firmware update server for firmware updates.
-2. You will do this by sending a HTTP GET request for the RVU.json file. You will use device_model F53.HI.
+2. You will do this by providing a button for the user to send a HTTP GET request for camera's RVU.json file. You will use device_model F53.HI.
 3. After receipt of the RVU.json file, check the soc_version against the camera’s SOC version using: /cgi-bin/param.cgi?f=get_device_conf.
 4. If the firmware is out of date (it is), prompt the user to download both the firmware and changelog.
-5. The user should be prompted to upload the firmware within the form at the web server root.
+5. The user should be prompted to upload the firmware within the form at the web server root (index.html).
 6. The firmware upload takes 10 seconds. There will be a JSON response from the server once the file uploads to the camera.
 7. Once the firmware is uploaded, the user should be prompted to start the firmware update process.
 8. There is an endpoint: /update. A GET request to /update will start the firmware update process. The firmware update process will take 30 seconds. The camera will send a response when the update completes.
