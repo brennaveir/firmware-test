@@ -78,7 +78,7 @@ pub async fn upload_firmware(mut multipart: Multipart) -> Json<String> {
         );
     }
     sleep(Duration::from_secs(10)).await;
-    Json("File successfully uploaded".to_string())
+    Json("Firmware successfully uploaded".to_string())
 }
 
 pub async fn update_camera() -> Json<String> {

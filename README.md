@@ -2,7 +2,7 @@
 
 Thank you for your interest in the front-end developer position at Haverford Systems, Inc.
 
-As a front end developer at Haverford Systems, Inc., you will be tasked with developing user interfaces for robotic cameras under our two brands: PTZOptics and HuddleCamHD.
+As a front end developer at Haverford Systems, Inc., you will be tasked with developing user interfaces for audio and video devices sold through our two brands: PTZOptics and HuddleCamHD.
 
 ## About
 
@@ -10,11 +10,11 @@ For this skill assessment, we ask you to develop a firmware updating function. O
 
     https://firmware.ptzoptics.com
 
-Our cameras can reach out to the cloud to receive a firmware update through a HTTP GET request. Here is a sample cURL request for a firmware update:
+Our cameras can reach out to the cloud to receive a firmware update through a HTTP GET request. Here is a sample cURL request for firmware update information (delivered via RVU.json):
 
     curl https://firmware.ptzoptics.com/F53.HI/RVU.json
 
-Each camera’s firmware is hosted by its model number. In this case the model is: F53.HI
+Each camera’s firmware is availble at our web server based on the model identifier. In this case the model identifier is: F53.HI
 
 ## RVU.json
 
@@ -42,7 +42,7 @@ RVU.json contains the following information:
 
 We can query the SOC version of the camera through a cgi-bin request at the camera’s IP address:
 
-/cgi-bin/param.cgi?f=get_device_conf
+    /cgi-bin/param.cgi?f=get_device_conf
 
 This returns information like the following:
 
@@ -63,11 +63,11 @@ We need to upgrade this device.
 
 ## Upgrade Device
 
-The firmware file is located in the hardware model folder. The soc_version is the filename:
+The firmware file is located in the hardware model identifier (device_model) folder. The soc_version is the filename:
 
     https://firmware.ptzoptics.com/F53.HI/VX630A_F53.HI_V2.0.39_24M_20230817.img 
 
-The changelog is located in the device_model folder. The log_name is the filename:
+The changelog is located in the hardware model identifier (device_model) folder. The log_name is the filename:
 
     https://firmware.ptzoptics.com/F53.HI/upgrade.loghttps://firmware.ptzoptics.com/F53.HI/upgrade.log   
 
@@ -80,34 +80,48 @@ For your skill assessment, you will emulate the firmware update function of a ca
 3. After receipt of the RVU.json file, check the soc_version against the camera’s SOC version using: /cgi-bin/param.cgi?f=get_device_conf.
 4. If the firmware is out of date (it is), prompt the user to download both the firmware and changelog.
 5. The user should be prompted to upload the firmware within the form at the web server root.
-6. The firmware upload takes about 10 seconds. There will be a JSON response from the server once the file uploads to the camera.
+6. The firmware upload takes 10 seconds. There will be a JSON response from the server once the file uploads to the camera.
 7. Once the firmware is uploaded, the user should be prompted to start the firmware update process.
-8. There is an endpoint:/update. A GET request to /update will start the firmware update process. The firmware update process will take 30 seconds. The camera will send a response when the update completes.
+8. There is an endpoint: /update. A GET request to /update will start the firmware update process. The firmware update process will take 30 seconds. The camera will send a response when the update completes.
 9. The user should be informed about the progress of the firmware update. At the end of the update process, the user should be informed that the camera is updated and it will reboot momentarily. There is no need to simulate the reboot process.
 
 ## Requirements
 
-Please clone this repository:
+All needed code is within this repository.
 
 You will need to install rust to your computer. Instructions are available at this page: [Install Rust](https://www.rust-lang.org/tools/install)
 
-Within the repository is a folder called “public”. Within this folder is: index.html file, main.js, and main.css
+There is no reason to modify any of the rust code. All of your work should be within the public folder. Within this folder are the following files:
+
+- index.html
+- scripts/main.js
+- styles/main.css
 
 Please accomplish the task by editing the index.html, main.js, and main.css files. You may use whatever tools you want to edit these files. However, there should be no additional dependencies required to run the app.
 
-Start the web server by typing:
+Start the web server by entering the following command in a terminal at the root of the project repository:
 
     cargo run
 
-at the root of the project. The webserver will be hosted at:
+The webserver will be hosted at:
 
     http://localhost:3000/
 
-Index.html is available at the project root. The following routes are available:
+index.html is available at the project root. The following routes are available:
 
-- GET /
-- POST /
-- GET /update
+- GET / (index.html)
+- POST / (upload firmware to server)
+- GET /update (update camera firmware)
 - GET /scripts/main.js
 - GET /styles/main.css
-- GET /cgi-bin/param.cgi?f=get_device_conf
+- GET /cgi-bin/param.cgi?f=get_device_conf (get device configuration)
+
+You will see tracing information in the terminal window for debugging purposes.
+
+## Submitting your test
+
+Please submit your test by sending a link to your public folder to:
+
+    developer.test@haverford.com 
+
+We look forward to receiving your submission!

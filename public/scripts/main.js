@@ -1,6 +1,7 @@
+// Send form data to server
 const form = document.getElementById('upload-form');
 form.addEventListener('submit', async (event) => {
-    event.preventDefault(); // prevent default form submission behavior
+    event.preventDefault();
 
     const formData = new FormData(form);
     const response = await fetch('/', {
