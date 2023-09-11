@@ -76,10 +76,10 @@ The changelog is located in the hardware model identifier (device_model) folder.
 For your skill assessment, you will emulate the firmware update function of a camera on a local web server. The steps are as follows:
 
 1. Create a web page which will allow a user to query the firmware update server for firmware updates.
-2. You will do this by providing a button for the user to send a HTTP GET request for camera's RVU.json file. You will use device_model F53.HI.
+2. You will do this by providing a button for the user to send a HTTP GET request for the camera's RVU.json file, i.e. check for firmware update. You will use device_model F53.HI.
 3. After receipt of the RVU.json file, check the soc_version against the camera’s SOC version using: /cgi-bin/param.cgi?f=get_device_conf.
 4. If the firmware is out of date (it is), prompt the user to download both the firmware and changelog.
-5. The user should be prompted to upload the firmware within the form at the web server root (index.html).
+5. The user should be prompted to upload the firmware within the upload-form at the web server root (index.html).
 6. The firmware upload takes 10 seconds. There will be a JSON response from the server once the file uploads to the camera.
 7. Once the firmware is uploaded, the user should be prompted to start the firmware update process.
 8. There is an endpoint: /update. A GET request to /update will start the firmware update process. The firmware update process will take 30 seconds. The camera will send a response when the update completes.
@@ -120,7 +120,7 @@ You will see tracing information in the terminal window for debugging purposes.
 
 ## Submitting your test
 
-Please submit your test by sending a link to your public folder to:
+Please add your name, email address, and preferred interview dates in INFO.md. Please submit your test by sending a link with your code to:
 
     developer.test@haverford.com 
 
