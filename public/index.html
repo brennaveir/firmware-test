@@ -1,19 +1,39 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Update PTZOptics Firmware</title>
-    <link rel="stylesheet" type="text/css" href="styles/main.css">
-  </head>
-  <body>
-    <h1>Update PTZOptics Firmware</h1>
-    <form id="upload-form" enctype="multipart/form-data">
-        <label>
-            Upload firmware:
-            <input type="file" name="file" multiple>
-        </label>
 
-        <input type="submit" value="Upload files">
+<head>
+  <title>Update PTZOptics Firmware</title>
+  <link rel="stylesheet" type="text/css" href="styles/main.css">
+</head>
+
+<body>
+  <main>
+    <!-- Create a web page which will allow a user to query the firmware update server
+       for firmware updates -->
+    <img src="https://ptzoptics.com/wp-content/uploads/2020/12/pt-vl-zcam-front-1.jpg">
+    <h1 id="instructions">Check for PTZOptics Firmware updates</h1>
+    <ul id="firmware-versions">
+      <li id="current"></li>
+      <li id="device"></li>
+    </ul>
+    <!-- Provide a button for the user to send a HTTP GET request for the camera's RVU.json file -->
+    <button type="button" id="update-check-btn">Check</button>
+    <button type="button" id="download-btn">Apply</button>
+    <button type="button" id="update-firmware-btn">Update</button>
+    <div id="myProgress">
+      <div id="myBar"></div>
+    </div>
+    <div id="timer"></div>
+    <form id="upload-form" enctype="multipart/form-data">
+      <label>
+        Upload firmware:
+        <input type="file" name="file" multiple>
+      </label>
+
+      <input type="submit" value="Upload files">
     </form>
-    <script src="scripts/main.js"></script>
-  </body>
+  </main>
+  <script src="scripts/main.js"></script>
+</body>
+
 </html>
